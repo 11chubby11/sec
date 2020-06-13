@@ -20,9 +20,9 @@ update_config=1
 network={
     ssid="Camera"
     mode=2
-    frequency=2437
-    key_mgmt=WPA-PSK
-    proto=RSN WPA
+    #frequency=2437
+    #key_mgmt=WPA-PSK
+    #proto=RSN WPA
     psk="password"
 }
 EOF
