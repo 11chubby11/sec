@@ -54,7 +54,7 @@ DHCP=yes
 #Gateway=192.168.50.1
 #DNS=84.200.69.80 1.1.1.1
 EOF
-cat > systemctl edit wpa_supplicant@wlan0.service <<EOF
+systemctl edit wpa_supplicant@wlan0.service
 [Service]
 ExecStartPre=/sbin/iw dev %i set type __ap
 ExecStartPre=/bin/ip link set %i master br0
@@ -64,4 +64,3 @@ ExecStart=/sbin/wpa_supplicant -c/etc/wpa_supplicant/wpa_supplicant-%I.conf -Dnl
 
 ExecStopPost=-/bin/ip link set %i nomaster
 ExecStopPost=-/sbin/iw dev %i set type managed
-EOF
