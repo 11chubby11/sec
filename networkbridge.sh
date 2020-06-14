@@ -54,12 +54,3 @@ DHCP=yes
 #DNS=84.200.69.80 1.1.1.1
 EOF
 systemctl edit wpa_supplicant@wlan0.service
-[Service]
-ExecStartPre=/sbin/iw dev %i set type __ap
-ExecStartPre=/bin/ip link set %i master br0
-
-ExecStart=
-ExecStart=/sbin/wpa_supplicant -c/etc/wpa_supplicant/wpa_supplicant-%I.conf -Dnl80211,wext -i%I -bbr0
-
-ExecStopPost=-/bin/ip link set %i nomaster
-ExecStopPost=-/sbin/iw dev %i set type managed
