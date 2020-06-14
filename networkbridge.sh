@@ -18,7 +18,7 @@ ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 
 network={
-    ssid="Camera"
+    ssid="Camera1"
     mode=2
     #frequency=2437
     #key_mgmt=WPA-PSK
