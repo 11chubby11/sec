@@ -1,3 +1,5 @@
 pip3 install https://dl.google.com/coral/python/tflite_runtime-2.1.0.post1-cp37-cp37m-linux_armv7l.whl
-
-https://github.com/tensorflow/examples/tree/master/lite/examples/image_classification/raspberry_pi
+curl -O https://storage.googleapis.com/download.tensorflow.org/models/tflite/mobilenet_v1_1.0_224_quant_and_labels.zip
+curl -O https://storage.googleapis.com/download.tensorflow.org/models/tflite/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip
+unzip mobilenet_v1_1.0_224_quant_and_labels.zip -d /tmp
+rm mobilenet_v1_1.0_224_quant_and_labels.zip
