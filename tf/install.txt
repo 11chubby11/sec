@@ -4,4 +4,5 @@ cd examples/lite/examples/object_detection/raspberry_pi
 curl -O https://storage.googleapis.com/download.tensorflow.org/models/tflite/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip
 unzip coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip -d /tmp
 rm coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip
-python3 detect_picamera.py --model /tmp/detect.tflite --labels /tmp/labelmap.txt
+(cd /tmp && curl -O  https://dl.google.com/coral/canned_models/coco_labels.txt)
+python3 detect_picamera.py --model /tmp/detect.tflite --labels /tmp/coco_labels.txt
