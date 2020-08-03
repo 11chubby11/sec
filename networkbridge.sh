@@ -1,56 +1,45 @@
-# https://raspberrypi.stackexchange.com/questions/108592/use-systemd-networkd-for-general-networking/108593#108593
-# deinstall classic networking
-apt -y --autoremove purge ifupdown dhcpcd5 isc-dhcp-client isc-dhcp-common rsyslog
-apt-mark hold ifupdown dhcpcd5 isc-dhcp-client isc-dhcp-common rsyslog raspberrypi-net-mods openresolv
-rm -r /etc/network /etc/dhcp
-# setup/enable systemd-resolved and systemd-networkd
-apt -y --autoremove purge avahi-daemon
-apt-mark hold avahi-daemon libnss-mdns
-apt install libnss-resolve
-ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-systemctl enable systemd-networkd.service systemd-resolved.service
+#https://www.raspberrypi.org/documentation/configuration/wireless/access-point-bridged.md
 
-# https://raspberrypi.stackexchange.com/questions/88214/setting-up-a-raspberry-pi-as-an-access-point-the-easy-way
-cat > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf <<EOF
-country=NZ
-ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-update_config=1
+sudo apt install hostapd
+sudo systemctl unmask hostapd
+sudo systemctl enable hostapd
 
-network={
-    ssid="Camera1"
-    mode=2
-    #frequency=2437
-    #key_mgmt=WPA-PSK
-    #proto=RSN WPA
-    psk="password"
-}
-EOF
-chmod 600 /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
-systemctl disable wpa_supplicant.service
-systemctl enable wpa_supplicant@wlan0.service
-rfkill unblock 0
-cat > /etc/systemd/network/02-br0.netdev <<EOF
+sudo bash -c 'cat > /etc/systemd/network/bridge-br0.netdev <<EOF
 [NetDev]
 Name=br0
 Kind=bridge
-EOF
+EOF'
 
-cat > /etc/systemd/network/04-br0_add-eth0.network <<EOF
+sudo bash -c 'cat > /etc/systemd/network/br0-member-eth0.network <<EOF
 [Match]
 Name=eth0
 [Network]
 Bridge=br0
-EOF
+EOF'
 
-cat > /etc/systemd/network/12-br0_up.network <<EOF
-[Match]
-Name=br0
-[Network]
-MulticastDNS=yes
-DHCP=yes
-# to use static IP uncomment these and comment DHCP=yes
-#Address=192.168.50.60/24
-#Gateway=192.168.50.1
-#DNS=84.200.69.80 1.1.1.1
-EOF
-systemctl edit wpa_supplicant@wlan0.service
+sudo systemctl enable systemd-networkd
+
+sudo sed -i '1s/^/denyinterfaces wlan0 eth0\n/' /etc/dhcpcd.conf
+
+sudo echo interface br0 >> /etc/dhcpcd.conf
+
+sudo rfkill unblock wlan
+
+sudo bash -c 'cat > /etc/hostapd/hostapd.conf <<EOF
+country_code=NZ
+interface=wlan0
+bridge=br0
+ssid=SecurityCameraNetwork
+hw_mode=g
+channel=7
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa=2
+wpa_passphrase=password
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+EOF'
+
+sudo systemctl reboot
