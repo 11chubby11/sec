@@ -31,13 +31,13 @@ interface=wlan0
 bridge=br0
 ssid=SecurityCameraNetwork
 hw_mode=g
-channel=7
+#channel=7
 macaddr_acl=0
 auth_algs=1
-ignore_broadcast_ssid=0
+#ignore_broadcast_ssid=0
 wpa=2
 wpa_passphrase=password
-wpa_key_mgmt=WPA-PSK
+wpa_key_mgmt=WPA-PSK SAE
 wpa_pairwise=TKIP
 rsn_pairwise=CCMP
 EOF'
