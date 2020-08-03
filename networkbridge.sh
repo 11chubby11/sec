@@ -25,6 +25,8 @@ sudo echo interface br0 >> /etc/dhcpcd.conf
 
 sudo rfkill unblock wlan
 
+#https://w1.fi/cgit/hostap/plain/hostapd/hostapd.conf
+
 sudo bash -c 'cat > /etc/hostapd/hostapd.conf <<EOF
 country_code=NZ
 interface=wlan0
