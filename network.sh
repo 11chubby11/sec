@@ -1,5 +1,7 @@
 #https://www.raspberrypi.org/documentation/configuration/wireless/access-point-bridged.md
 
+#sudo apt update
+#sudo apt upgrade
 sudo apt install hostapd
 sudo systemctl unmask hostapd
 sudo systemctl enable hostapd
@@ -43,6 +45,7 @@ wpa_pairwise=TKIP
 rsn_pairwise=CCMP
 EOF'
 
-sudo echo hdmi_force_hotplug=1 >> /boot/config.txt
+sudo bash -c 'echo hdmi_force_hotplug=1 >> /boot/config.txt'
+#gpu_mem=256
 
 sudo systemctl reboot
