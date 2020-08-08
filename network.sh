@@ -1,6 +1,6 @@
 #https://www.raspberrypi.org/documentation/configuration/wireless/access-point-bridged.md
-sudo apt update
-sudo apt upgrade -y
+#sudo apt update
+#sudo apt upgrade -y
 sudo apt install hostapd
 sudo systemctl unmask hostapd
 sudo systemctl enable hostapd
