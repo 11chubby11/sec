@@ -87,6 +87,7 @@ def detect_objects(interpreter, image, threshold):
   return results
 
 
+detected_dic = {}
 def annotate_objects(annotator, results, labels):
   """Draws the bounding box and label for each object in the results."""
   for obj in results:
@@ -102,6 +103,14 @@ def annotate_objects(annotator, results, labels):
     annotator.bounding_box([xmin, ymin, xmax, ymax])
     annotator.text([xmin, ymin],
                    '%s\n%.2f' % (labels[obj['class_id']], obj['score']))
+    if (obj['class_id'] in range(0, 9) or obj['class_id'] in range(15, 25)):
+      if labels[obj['class_id']] not in detected_dic.keys():
+        detected_dic[labels[obj['class_id']]] = 100
+        print(time.ctime(),labels[obj['class_id']],'detected')
+    for key, value in list(detected_dic.items()):
+        detected_dic[key] = value-1
+        if value == 1:
+            del detected_dic[key]
 
 
 def main():
@@ -116,7 +125,7 @@ def main():
       help='Score threshold for detected objects.',
       required=False,
       type=float,
-      default=0.5)
+      default=0.6)
   args = parser.parse_args()
 
   labels = load_labels(args.labels)
@@ -154,3 +163,4 @@ def main():
 
 if __name__ == '__main__':
   main()
+
