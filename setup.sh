@@ -36,4 +36,7 @@ wpa_pairwise=TKIP
 rsn_pairwise=CCMP
 EOF'
 sudo bash -c 'echo hdmi_force_hotplug=1 >> /boot/config.txt'
+sudo bash -c 'cat > /etc/fstab <<EOF
+/dev/sda1 /home/pi/Desktop/usb ntfs defaults,auto,users,rw,nofail 0 0
+EOF'
 sudo nano /etc/hostapd/hostapd.conf
