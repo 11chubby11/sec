@@ -150,11 +150,13 @@ def main():
     try:
       stream = io.BytesIO()
       annotator = Annotator(camera)
-      for _ in camera.capture_continuous(
-          stream, format='jpeg', use_video_port=True):
+      for _ in camera.capture_continuous(stream, format='jpeg', use_video_port=True):
         stream.seek(0)
-        image = Image.open(stream).convert('RGB').resize(
-            (input_width, input_height), Image.ANTIALIAS)
+        try:
+          image = Image.open(stream).convert('RGB').resize((input_width, input_height), Image.ANTIALIAS)
+        except Exception as e:
+          print(e)
+          continue
         start_time = time.monotonic()
         results = detect_objects(interpreter, image, args.threshold)
         elapsed_ms = (time.monotonic() - start_time) * 1000
@@ -166,10 +168,6 @@ def main():
 
         stream.seek(0)
         stream.truncate()
-
-    except Exception as e:
-      print(e)
-      main()
 
     finally:
       camera.stop_preview()
