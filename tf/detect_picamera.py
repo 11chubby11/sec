@@ -167,6 +167,10 @@ def main():
         stream.seek(0)
         stream.truncate()
 
+    except Exception as e:
+      print(e)
+      main()
+
     finally:
       camera.stop_preview()
 
