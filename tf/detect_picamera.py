@@ -156,6 +156,7 @@ def main():
           image = Image.open(stream).convert('RGB').resize((input_width, input_height), Image.ANTIALIAS)
         except Exception as e:
           print(e)
+          stream.truncate() #test
           continue
         start_time = time.monotonic()
         results = detect_objects(interpreter, image, args.threshold)
