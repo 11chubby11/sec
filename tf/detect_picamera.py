@@ -108,12 +108,12 @@ def annotate_objects(annotator, results, labels, camera):
     if (obj['class_id'] in range(0, 9) or obj['class_id'] in range(15, 25)):
       if labels[obj['class_id']] not in detected_dic.keys():
         detected_dic[labels[obj['class_id']]] = 100
-        print(time.ctime(),labels[obj['class_id']],'detected')
+        print(time.ctime(), labels[obj['class_id']], int(obj['score']*100))
         try:
             os.makedirs(datetime.now().strftime("/home/pi/Desktop/usb/%Y/%m/%d"), exist_ok=True)
             camera.capture('/home/pi/Desktop/usb/'+
                            datetime.now().strftime("%Y/%m/%d/%H%M%S ")+
-                           labels[obj['class_id']]+'.jpeg')
+                           labels[obj['class_id']]+str(int(obj['score']*100))+'.jpeg')
         except Exception as e:
             print('log: camera.capture', e)
     for key, value in list(detected_dic.items()):
