@@ -150,10 +150,10 @@ def main():
     try:
       stream = io.BytesIO()
       annotator = Annotator(camera)
-      for _ in camera.capture_continuous(stream, format='jpeg', use_video_port=True):
+      for _ in camera.capture_continuous(stream, format='jpeg', use_video_port=True, resize=(input_width,input_height)):
         stream.seek(0)
         try:
-          image = Image.open(stream).convert('RGB').resize((input_width, input_height), Image.ANTIALIAS)
+          image = Image.open(stream).convert('RGB')
         except Exception as e:
           print(e)
           stream.truncate() #test
