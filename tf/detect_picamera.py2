@@ -24,6 +24,9 @@ import io
 import re
 import time
 
+import web
+app = web.application(('/(.*)', 'hello'), globals())
+
 from datetime import datetime
 import os
 
@@ -173,6 +176,12 @@ def main():
     finally:
       camera.stop_preview()
 
+class hello:
+  def GET(self, name):
+    if not name:
+      name = 'World'
+    return 'Hello, ' + name + '!'
 
 if __name__ == '__main__':
   main()
+  app.run()
