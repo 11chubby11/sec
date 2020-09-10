@@ -96,15 +96,15 @@ def annotate_objects(annotator, results, labels, camera):
   for obj in results:
     # Convert the bounding box figures from relative coordinates
     # to absolute coordinates based on the original resolution
-    ymin, xmin, ymax, xmax = obj['bounding_box']
-    xmin = int(xmin * CAMERA_WIDTH)
-    xmax = int(xmax * CAMERA_WIDTH)
-    ymin = int(ymin * CAMERA_HEIGHT)
-    ymax = int(ymax * CAMERA_HEIGHT)
+    #ymin, xmin, ymax, xmax = obj['bounding_box']
+    #xmin = int(xmin * CAMERA_WIDTH)
+    #xmax = int(xmax * CAMERA_WIDTH)
+    #ymin = int(ymin * CAMERA_HEIGHT)
+    #ymax = int(ymax * CAMERA_HEIGHT)
 
     # Overlay the box, label, and score on the camera preview
-    annotator.bounding_box([xmin, ymin, xmax, ymax])
-    annotator.text([xmin, ymin],
+    #annotator.bounding_box([xmin, ymin, xmax, ymax])
+    #annotator.text([xmin, ymin],
                    '%s\n%.2f' % (labels[obj['class_id']], obj['score']))
     if (obj['class_id'] in range(0, 9) or obj['class_id'] in range(15, 25)):
       if labels[obj['class_id']] not in detected_dic.keys():
@@ -114,7 +114,7 @@ def annotate_objects(annotator, results, labels, camera):
             os.makedirs(datetime.now().strftime("/home/pi/Desktop/usb/%Y/%m/%d"), exist_ok=True)
             camera.capture('/home/pi/Desktop/usb/'+
                            datetime.now().strftime("%Y/%m/%d/%H%M%S ")+
-                           labels[obj['class_id']]+'.jpeg', 'jpeg')
+                           labels[obj['class_id']]+'.jpeg')
         except Exception as e:
             print('log: camera.capture', e)
     for key, value in list(detected_dic.items()):
@@ -153,7 +153,7 @@ def main():
       for _ in camera.capture_continuous(stream, format='jpeg', use_video_port=True, resize=(input_width,input_height)):
         stream.seek(0)
         try:
-          image = Image.open(stream).convert('RGB')
+          image = Image.open(stream)#.convert('RGB')
         except Exception as e:
           print(e)
           stream.truncate() #test
@@ -162,10 +162,10 @@ def main():
         results = detect_objects(interpreter, image, args.threshold)
         elapsed_ms = (time.monotonic() - start_time) * 1000
 
-        annotator.clear()
+        #annotator.clear()
         annotate_objects(annotator, results, labels, camera)
-        annotator.text([5, 0], '%.1fms' % (elapsed_ms))
-        annotator.update()
+        #annotator.text([5, 0], '%.1fms' % (elapsed_ms))
+        #annotator.update()
 
         stream.seek(0)
         stream.truncate()
