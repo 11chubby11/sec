@@ -104,8 +104,7 @@ def annotate_objects(annotator, results, labels, camera):
 
     # Overlay the box, label, and score on the camera preview
     #annotator.bounding_box([xmin, ymin, xmax, ymax])
-    #annotator.text([xmin, ymin],
-                   '%s\n%.2f' % (labels[obj['class_id']], obj['score']))
+    #annotator.text([xmin, ymin], '%s\n%.2f' % (labels[obj['class_id']], obj['score']))
     if (obj['class_id'] in range(0, 9) or obj['class_id'] in range(15, 25)):
       if labels[obj['class_id']] not in detected_dic.keys():
         detected_dic[labels[obj['class_id']]] = 100
