@@ -35,8 +35,8 @@ import picamera
 from PIL import Image
 from tflite_runtime.interpreter import Interpreter
 
-CAMERA_WIDTH = 1280
-CAMERA_HEIGHT = 960
+CAMERA_WIDTH = 3280
+CAMERA_HEIGHT = 2464
 
 
 def load_labels(path):
@@ -146,7 +146,7 @@ def main():
   with picamera.PiCamera(
       resolution=(CAMERA_WIDTH, CAMERA_HEIGHT), framerate=30) as camera:
     camera.rotation=180
-    camera.start_preview()
+    #camera.start_preview()
     try:
       stream = io.BytesIO()
       annotator = Annotator(camera)
