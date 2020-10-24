@@ -90,18 +90,23 @@ def process_objects(results, labels, camera):
         detected_dic[labels[obj['class_id']]] = 100
         #print('time', labels[obj['class_id']], int(obj['score']*100))
         try:
-          disk_free = shutil.disk_usage(storage_location).free
           ymin, xmin, ymax, xmax = obj['bounding_box']
-          xmin = int(xmin * CAMERA_WIDTH)
-          xmax = int(xmax * CAMERA_WIDTH)
-          ymin = int(ymin * CAMERA_HEIGHT)
-          ymax = int(ymax * CAMERA_HEIGHT)
-          csvlog.writerow([datetime.now(), CPUTemperature().temperature, disk_free, labels[obj['class_id']], int(obj['score']*100, [xmin, xmax, ymin, ymax]])
+          xmin *= CAMERA_WIDTH
+          xmax *= CAMERA_WIDTH
+          ymin *= CAMERA_HEIGHT
+          ymax *= CAMERA_HEIGHT
+          disk_free = shutil.disk_usage(storage_location).free
+          datetimenow = datetime.now()
+          csvlog.writerow([datetimenow,
+                           CPUTemperature().temperature,
+                           disk_free, labels[obj['class_id']],
+                           obj['score']*100,
+                           [int(xmin),int(xmax),int(ymin),int(ymax)]])
           if disk_free < 100*1024*1024: #100MB
             free_up_space()
-          os.makedirs(datetime.now().strftime(storage_location+'%Y/%m/%d'), exist_ok=True)
+          os.makedirs(datetimenow.strftime(storage_location+'%Y/%m/%d'), exist_ok=True)
           camera.capture(storage_location+
-                         datetime.now().strftime('%Y/%m/%d/%H%M%S.%f ')+
+                         datetimenow.strftime('%Y/%m/%d/%H%M%S.%f ')+
                          labels[obj['class_id']]+
                          ' '+
                          str(int(obj['score']*100))+
