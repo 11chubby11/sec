@@ -33,6 +33,8 @@ import picamera
 from PIL import Image
 from tflite_runtime.interpreter import Interpreter
 
+import shutil #usb drive free space
+
 CAMERA_WIDTH = 3280
 CAMERA_HEIGHT = 2464
 
@@ -95,8 +97,9 @@ def annotate_objects(results, labels, camera):
     if (obj['class_id'] in range(0, 9) or obj['class_id'] in range(15, 25)):
       if labels[obj['class_id']] not in detected_dic.keys():
         detected_dic[labels[obj['class_id']]] = 100
-        print(time.ctime(), labels[obj['class_id']], int(obj['score']*100))
+        #print(time.ctime(), labels[obj['class_id']], int(obj['score']*100))
         try:
+            print('Disk usage:', shutil.disk_usage('/home/pi/Desktop/usb'))
             os.makedirs(datetime.now().strftime("/home/pi/Desktop/usb/%Y/%m/%d"), exist_ok=True)
             camera.capture('/home/pi/Desktop/usb/'+
                            datetime.now().strftime("%Y/%m/%d/%H%M%S ")+
@@ -132,6 +135,7 @@ def main():
   with picamera.PiCamera(resolution=(CAMERA_WIDTH, CAMERA_HEIGHT), framerate=15) as camera:
     camera.rotation=180
     camera.start_preview()
+    print('Running')
     try:
       stream = io.BytesIO()
       for _ in camera.capture_continuous(stream, format='jpeg', use_video_port=True, resize=(input_width,input_height)):
