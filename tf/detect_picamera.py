@@ -94,10 +94,12 @@ def process_objects(results, labels, camera):
           csvlog.writerow([datetime.now(), CPUTemperature().temperature, disk_free])
           if disk_free < 100*1024*1024: #100MB
             free_up_space()
-          os.makedirs(datetime.now().strftime(storage_location+"%Y/%m/%d"), exist_ok=True)
+          os.makedirs(datetime.now().strftime(storage_location+'%Y/%m/%d'), exist_ok=True)
           camera.capture(storage_location+
-                         datetime.now().strftime("%Y/%m/%d/%H%M%S.%f ")+
-                         labels[obj['class_id']]+str(int(obj['score']*100))+
+                         datetime.now().strftime('%Y/%m/%d/%H%M%S.%f ')+
+                         labels[obj['class_id']]+
+                         ' '+
+                         str(int(obj['score']*100))+
                          '.jpeg')
         except Exception as e:
           print('log: camera.capture', e)
