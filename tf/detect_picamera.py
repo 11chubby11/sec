@@ -103,10 +103,10 @@ def process_objects(results, labels, camera):
         detected_dic[labels[obj['class_id']]] = 100
         #print(time.ctime(), labels[obj['class_id']], int(obj['score']*100))
         try:
-          storage_location = "/home/pi/Desktop/usb"
+          storage_location = "/home/pi/Desktop/usb/"
           if shutil.disk_usage(storage_location).free < 100*1024*1024: #100MB
             clean_up(storage_location)
-          os.makedirs(datetime.now().strftime(storage_location+"/%Y/%m/%d"), exist_ok=True)
+          os.makedirs(datetime.now().strftime(storage_location+"%Y/%m/%d"), exist_ok=True)
           camera.capture(storage_location+
                          datetime.now().strftime("%Y/%m/%d/%H%M%S ")+
                          labels[obj['class_id']]+str(int(obj['score']*100))+
