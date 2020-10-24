@@ -27,8 +27,6 @@ import time
 from datetime import datetime
 import os
 
-#from annotation import Annotator
-
 import numpy as np
 import picamera
 
@@ -91,20 +89,9 @@ def detect_objects(interpreter, image, threshold):
 
 
 detected_dic = {}
-def annotate_objects(annotator, results, labels, camera):
+def annotate_objects(results, labels, camera):
   """Draws the bounding box and label for each object in the results."""
   for obj in results:
-    # Convert the bounding box figures from relative coordinates
-    # to absolute coordinates based on the original resolution
-    #ymin, xmin, ymax, xmax = obj['bounding_box']
-    #xmin = int(xmin * CAMERA_WIDTH)
-    #xmax = int(xmax * CAMERA_WIDTH)
-    #ymin = int(ymin * CAMERA_HEIGHT)
-    #ymax = int(ymax * CAMERA_HEIGHT)
-
-    # Overlay the box, label, and score on the camera preview
-    #annotator.bounding_box([xmin, ymin, xmax, ymax])
-    #annotator.text([xmin, ymin], '%s\n%.2f' % (labels[obj['class_id']], obj['score']))
     if (obj['class_id'] in range(0, 9) or obj['class_id'] in range(15, 25)):
       if labels[obj['class_id']] not in detected_dic.keys():
         detected_dic[labels[obj['class_id']]] = 100
@@ -148,7 +135,6 @@ def main():
     camera.start_preview()
     try:
       stream = io.BytesIO()
-      annotator = Annotator(camera)
       for _ in camera.capture_continuous(stream, format='jpeg', use_video_port=True, resize=(input_width,input_height)):
         stream.seek(0)
         try:
@@ -161,10 +147,7 @@ def main():
         results = detect_objects(interpreter, image, args.threshold)
         elapsed_ms = (time.monotonic() - start_time) * 1000
 
-        #annotator.clear()
-        annotate_objects(annotator, results, labels, camera)
-        #annotator.text([5, 0], '%.1fms' % (elapsed_ms))
-        #annotator.update()
+        annotate_objects(results, labels, camera)
 
         stream.seek(0)
         stream.truncate()
