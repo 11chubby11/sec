@@ -27,7 +27,7 @@ import time
 from datetime import datetime
 import os
 
-from annotation import Annotator
+#from annotation import Annotator
 
 import numpy as np
 import picamera
@@ -170,6 +170,7 @@ def main():
         stream.truncate()
 
     finally:
+      print('finally')
       camera.stop_preview()
 
 
