@@ -129,8 +129,7 @@ def main():
   interpreter.allocate_tensors()
   _, input_height, input_width, _ = interpreter.get_input_details()[0]['shape']
 
-  with picamera.PiCamera(
-      resolution=(CAMERA_WIDTH, CAMERA_HEIGHT), framerate=15) as camera:
+  with picamera.PiCamera(resolution=(CAMERA_WIDTH, CAMERA_HEIGHT), framerate=15) as camera:
     camera.rotation=180
     camera.start_preview()
     try:
@@ -138,9 +137,10 @@ def main():
       for _ in camera.capture_continuous(stream, format='jpeg', use_video_port=True, resize=(input_width,input_height)):
         stream.seek(0)
         try:
-          image = Image.open(stream)#.convert('RGB')
+          image = Image.open(stream)
         except Exception as e:
           print(e)
+          print('test: stream.truncate()')
           stream.truncate() #test
           continue
         start_time = time.monotonic()
