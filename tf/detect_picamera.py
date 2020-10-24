@@ -91,7 +91,7 @@ def process_objects(results, labels, camera):
         #print('time', labels[obj['class_id']], int(obj['score']*100))
         try:
           disk_usage = shutil.disk_usage(storage_location)
-          csvlog.writerow(datetime.now(), CPUTemperature().temperature, disk_usage.total, disk_usage.used, disk_usage.free)
+          csvlog.writerow([datetime.now(), CPUTemperature().temperature, disk_usage.total, disk_usage.used, disk_usage.free])
           if disk_usage.free < 100*1024*1024: #100MB
             free_up_space()
           os.makedirs(datetime.now().strftime(storage_location+"%Y/%m/%d"), exist_ok=True)
