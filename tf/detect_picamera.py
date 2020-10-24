@@ -91,7 +91,12 @@ def process_objects(results, labels, camera):
         #print('time', labels[obj['class_id']], int(obj['score']*100))
         try:
           disk_free = shutil.disk_usage(storage_location).free
-          csvlog.writerow([datetime.now(), CPUTemperature().temperature, disk_free])
+          ymin, xmin, ymax, xmax = obj['bounding_box']
+          xmin = int(xmin * CAMERA_WIDTH)
+          xmax = int(xmax * CAMERA_WIDTH)
+          ymin = int(ymin * CAMERA_HEIGHT)
+          ymax = int(ymax * CAMERA_HEIGHT)
+          csvlog.writerow([datetime.now(), CPUTemperature().temperature, disk_free, labels[obj['class_id']], int(obj['score']*100, [xmin, xmax, ymin, ymax]])
           if disk_free < 100*1024*1024: #100MB
             free_up_space()
           os.makedirs(datetime.now().strftime(storage_location+'%Y/%m/%d'), exist_ok=True)
