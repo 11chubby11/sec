@@ -90,8 +90,12 @@ def detect_objects(interpreter, image, threshold):
   return results
 
 
+def clean_up(storage_location):
+  print('USB has less than 100MB!', shutil.disk_usage(storage_location).free)
+
+
 detected_dic = {}
-def annotate_objects(results, labels, camera):
+def process_objects(results, labels, camera):
   """Draws the bounding box and label for each object in the results."""
   for obj in results:
     if (obj['class_id'] in range(0, 9) or obj['class_id'] in range(15, 25)):
@@ -99,17 +103,20 @@ def annotate_objects(results, labels, camera):
         detected_dic[labels[obj['class_id']]] = 100
         #print(time.ctime(), labels[obj['class_id']], int(obj['score']*100))
         try:
-            print(shutil.disk_usage('/home/pi/Desktop/usb').free)
-            os.makedirs(datetime.now().strftime("/home/pi/Desktop/usb/%Y/%m/%d"), exist_ok=True)
-            camera.capture('/home/pi/Desktop/usb/'+
-                           datetime.now().strftime("%Y/%m/%d/%H%M%S ")+
-                           labels[obj['class_id']]+str(int(obj['score']*100))+'.jpeg')
+          storage_location = "/home/pi/Desktop/usb"
+          if shutil.disk_usage(storage_location).free < 100*1024*1024: #100MB
+            clean_up(storage_location)
+          os.makedirs(datetime.now().strftime(storage_location+"/%Y/%m/%d"), exist_ok=True)
+          camera.capture(storage_location+
+                         datetime.now().strftime("%Y/%m/%d/%H%M%S ")+
+                         labels[obj['class_id']]+str(int(obj['score']*100))+
+                         '.jpeg')
         except Exception as e:
-            print('log: camera.capture', e)
+          print('log: camera.capture', e)
     for key, value in list(detected_dic.items()):
-        detected_dic[key] = value-1
-        if value == 1:
-            del detected_dic[key]
+      detected_dic[key] = value-1
+      if value == 1:
+        del detected_dic[key]
 
 
 def main():
@@ -147,11 +154,11 @@ def main():
           print('test: stream.truncate()')
           stream.truncate() #test
           continue
-        start_time = time.monotonic()
+        #start_time = time.monotonic()
         results = detect_objects(interpreter, image, args.threshold)
-        elapsed_ms = (time.monotonic() - start_time) * 1000
+        #elapsed_ms = (time.monotonic() - start_time) * 1000
 
-        annotate_objects(results, labels, camera)
+        process_objects(results, labels, camera)
 
         stream.seek(0)
         stream.truncate()
