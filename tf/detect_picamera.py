@@ -102,7 +102,7 @@ def process_objects(results, labels, camera):
                            disk_free, labels[obj['class_id']],
                            obj['score']*100,
                            [int(xmin),int(xmax),int(ymin),int(ymax)]])
-          if disk_free < 100*1024*1024: #100MB
+          if disk_free < 100*1000*1000: #100MB
             free_up_space()
           os.makedirs(datetimenow.strftime(storage_location+'%Y/%m/%d'), exist_ok=True)
           camera.capture(storage_location+
@@ -162,8 +162,10 @@ def main():
         stream.truncate()
 
     finally:
-      print('finally')
+      csvlog.writerow([datetime.now(), 'camera.capture_continuous fail - Rebooting'])
+      print('camera.capture_continuous fail - Rebooting')
       camera.stop_preview()
+      #os.system('reboot')
 
 
 if __name__ == '__main__':
