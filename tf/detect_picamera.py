@@ -99,7 +99,7 @@ def annotate_objects(results, labels, camera):
         detected_dic[labels[obj['class_id']]] = 100
         #print(time.ctime(), labels[obj['class_id']], int(obj['score']*100))
         try:
-            print('Disk usage:', shutil.disk_usage('/home/pi/Desktop/usb'))
+            print(shutil.disk_usage('/home/pi/Desktop/usb').free)
             os.makedirs(datetime.now().strftime("/home/pi/Desktop/usb/%Y/%m/%d"), exist_ok=True)
             camera.capture('/home/pi/Desktop/usb/'+
                            datetime.now().strftime("%Y/%m/%d/%H%M%S ")+
