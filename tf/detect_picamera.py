@@ -1,20 +1,3 @@
-# python3
-#
-# Copyright 2019 The TensorFlow Authors. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""Example using TF Lite to detect objects with the Raspberry Pi camera."""
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -22,22 +5,26 @@ from __future__ import print_function
 import argparse
 import io
 import re
-import time
 
-from datetime import datetime
-import os
+from datetime import datetime #date and time
+import os #usb drive file operations
 
 import numpy as np
-import picamera
+import picamera #camera
 
 from PIL import Image
-from tflite_runtime.interpreter import Interpreter
+from tflite_runtime.interpreter import Interpreter #tensorflow
 
-import shutil #usb drive free space
+import shutil #usb drive usage
+
+from gpiozero import CPUTemperature #cpu temperature
 
 CAMERA_WIDTH = 3280
 CAMERA_HEIGHT = 2464
+storage_location = "/home/pi/Desktop/usb/"
 
+import csv #logging
+csvlog = csv.writer(storage_location+'log.csv', strict=1)
 
 def load_labels(path):
   """Loads the labels file. Supports files with or without index numbers."""
@@ -90,7 +77,7 @@ def detect_objects(interpreter, image, threshold):
   return results
 
 
-def clean_up(storage_location):
+def free_up_space():
   print('USB has less than 100MB!', shutil.disk_usage(storage_location).free)
 
 
@@ -101,11 +88,12 @@ def process_objects(results, labels, camera):
     if (obj['class_id'] in range(0, 9) or obj['class_id'] in range(15, 25)):
       if labels[obj['class_id']] not in detected_dic.keys():
         detected_dic[labels[obj['class_id']]] = 100
-        #print(time.ctime(), labels[obj['class_id']], int(obj['score']*100))
+        #print('time', labels[obj['class_id']], int(obj['score']*100))
         try:
-          storage_location = "/home/pi/Desktop/usb/"
-          if shutil.disk_usage(storage_location).free < 100*1024*1024: #100MB
-            clean_up(storage_location)
+          disk_usage = shutil.disk_usage(storage_location)
+          csvlog.writerow(datetime.now(), CPUTemperature().temperature, disk_usage.total, disk_usage.used, disk_usage.free)
+          if disk_usage.free < 100*1024*1024: #100MB
+            free_up_space()
           os.makedirs(datetime.now().strftime(storage_location+"%Y/%m/%d"), exist_ok=True)
           camera.capture(storage_location+
                          datetime.now().strftime("%Y/%m/%d/%H%M%S ")+
@@ -154,9 +142,7 @@ def main():
           print('test: stream.truncate()')
           stream.truncate() #test
           continue
-        #start_time = time.monotonic()
         results = detect_objects(interpreter, image, args.threshold)
-        #elapsed_ms = (time.monotonic() - start_time) * 1000
 
         process_objects(results, labels, camera)
 
