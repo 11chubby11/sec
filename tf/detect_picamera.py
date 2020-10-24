@@ -24,7 +24,8 @@ CAMERA_HEIGHT = 2464
 storage_location = "/home/pi/Desktop/usb/"
 
 import csv #logging
-csvlog = csv.writer(open(storage_location+'log.csv', 'a'), strict=1)
+csvlog_output = open(storage_location+'log.csv', 'a')
+csvlog = csv.writer(csvlog_output, strict=1)
 
 def load_labels(path):
   """Loads the labels file. Supports files with or without index numbers."""
