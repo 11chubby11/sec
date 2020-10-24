@@ -90,13 +90,13 @@ def process_objects(results, labels, camera):
         detected_dic[labels[obj['class_id']]] = 100
         #print('time', labels[obj['class_id']], int(obj['score']*100))
         try:
-          disk_usage = shutil.disk_usage(storage_location)
-          csvlog.writerow([datetime.now(), CPUTemperature().temperature, disk_usage.total, disk_usage.used, disk_usage.free])
-          if disk_usage.free < 100*1024*1024: #100MB
+          disk_free = shutil.disk_usage(storage_location).free
+          csvlog.writerow([datetime.now(), CPUTemperature().temperature, disk_free])
+          if disk_free < 100*1024*1024: #100MB
             free_up_space()
           os.makedirs(datetime.now().strftime(storage_location+"%Y/%m/%d"), exist_ok=True)
           camera.capture(storage_location+
-                         datetime.now().strftime("%Y/%m/%d/%H%M%S ")+
+                         datetime.now().strftime("%Y/%m/%d/%H%M%S.%f ")+
                          labels[obj['class_id']]+str(int(obj['score']*100))+
                          '.jpeg')
         except Exception as e:
