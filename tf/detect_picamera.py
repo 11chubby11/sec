@@ -78,7 +78,13 @@ def detect_objects(interpreter, image, threshold):
 
 
 def free_up_space():
-  print('USB has less than 100MB!', shutil.disk_usage(storage_location).free)
+  print('USB has less than 100MB! - deleting files')
+  csvlog.writerow([datetime.now(), 'Less than 100MB free.  Deleting images untill 1GB free.)
+  for files in os.walk(storage_location+'images'):
+    for file in files[2]:
+      os.remove(files[0]+'/'+file)
+      if shutil.disk_usage(storage_location).free > 1000*1000*1000: #1GB
+        break
 
 
 detected_dic = {}
@@ -104,9 +110,9 @@ def process_objects(results, labels, camera):
                            [int(xmin),int(xmax),int(ymin),int(ymax)]])
           if disk_free < 100*1000*1000: #100MB
             free_up_space()
-          os.makedirs(datetimenow.strftime(storage_location+'%Y/%m/%d'), exist_ok=True)
+          os.makedirs(datetimenow.strftime(storage_location+'images/%Y/%m/%d'), exist_ok=True)
           camera.capture(storage_location+
-                         datetimenow.strftime('%Y/%m/%d/%H%M%S.%f ')+
+                         datetimenow.strftime('images/%Y/%m/%d/%H%M%S.%f ')+
                          labels[obj['class_id']]+
                          ' '+
                          str(int(obj['score']*100))+
