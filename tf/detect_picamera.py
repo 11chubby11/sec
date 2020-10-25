@@ -137,7 +137,7 @@ def main():
       help='Score threshold for detected objects.',
       required=False,
       type=float,
-      default=0.6)
+      default=0.5) #threshold
   args = parser.parse_args()
 
   labels = load_labels(args.labels)
