@@ -167,9 +167,10 @@ def main():
         stream.seek(0)
         stream.truncate()
 
-    finally:
-      csvlog.writerow([datetime.now(), 'camera.capture_continuous fail - Rebooting'])
-      print('camera.capture_continuous fail - Rebooting')
+    except Exception as e:
+      csvlog.writerow([datetime.now(), e])
+      csvlog.writerow([datetime.now(), 'Rebooting'])
+      print(e, 'Rebooting')
       camera.stop_preview()
       #os.system('reboot')
 
