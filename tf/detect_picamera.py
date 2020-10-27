@@ -79,6 +79,8 @@ def detect_objects(interpreter, image, threshold):
 
 def free_up_space():
   print('USB has less than 100MB! - deleting files')
+  #if folder empty, delete it
+  #delete low percent images first
   csvlog.writerow([datetime.now(), 'Less than 100MB free. Deleting images until 1GB free.'])
   for files in os.walk(storage_location+'images'):
     for file in files[2]:
@@ -155,6 +157,7 @@ def main():
         stream.seek(0)
         try:
           image = Image.open(stream)
+          #remove fisheye effect
         except Exception as e:
           print(e)
           print('test: stream.truncate()')
