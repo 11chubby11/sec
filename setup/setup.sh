@@ -2,6 +2,7 @@
 sudo apt update
 #sudo apt upgrade -y
 sudo apt install nginx
+sudo rm /etc/nginx/sites-enabled/default
 pip3 install https://dl.google.com/coral/python/tflite_runtime-2.1.0.post1-cp37-cp37m-linux_armv7l.whl
 sudo systemctl enable --now vncserver-x11-serviced.service
 sudo bash -c 'cat  >> /boot/config.txt <<EOF
