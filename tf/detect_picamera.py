@@ -79,10 +79,11 @@ def detect_objects(interpreter, image, threshold):
 
 def free_up_space():
   print('USB has less than 100MB! - deleting files')
-  #if folder empty, delete it
   #delete low percent images first
   csvlog.writerow([datetime.now(), 'Less than 100MB free. Deleting images until 1GB free.'])
   for files in os.walk(storage_location+'images'):
+    if files[1] == [] and files[2] == []:
+      os.rmdir(files[0])
     for file in files[2]:
       os.remove(files[0]+'/'+file)
       if shutil.disk_usage(storage_location).free > 1000*1000*1000: #1GB
@@ -103,22 +104,22 @@ def process_objects(results, labels, camera):
           xmax *= CAMERA_WIDTH
           ymin *= CAMERA_HEIGHT
           ymax *= CAMERA_HEIGHT
-          disk_free = shutil.disk_usage(storage_location).free
+          #disk_free = shutil.disk_usage(storage_location).free
           datetimenow = datetime.now()
-          csvlog.writerow([datetimenow,
-                           CPUTemperature().temperature,
-                           disk_free, labels[obj['class_id']],
-                           obj['score']*100,
-                           [int(xmin),int(xmax),int(ymin),int(ymax)]])
-          if disk_free < 100*1000*1000: #100MB
-            free_up_space()
+          #csvlog.writerow([datetimenow,
+          #                 CPUTemperature().temperature,
+          #                 disk_free, labels[obj['class_id']],
+          #                 obj['score']*100,
+          #                 [int(xmin),int(xmax),int(ymin),int(ymax)]])
           os.makedirs(datetimenow.strftime(storage_location+'images/%Y/%m/%d'), exist_ok=True)
           camera.capture(storage_location+
                          datetimenow.strftime('images/%Y/%m/%d/%H%M%S.%f ')+
-                         labels[obj['class_id']]+
-                         ' '+
-                         str(int(obj['score']*100))+
+                         labels[obj['class_id']]+' '+
+                         str(int(obj['score']*100))+' '+
+                         str(int(xmin))+','+str(int(xmax))+','+str(int(ymin))+','+str(int(ymax))+
                          '.jpeg')
+        if shutil.disk_usage(storage_location).free < 100*1000*1000: #100MB
+          free_up_space()
         except Exception as e:
           print('log: camera.capture', e)
     for key, value in list(detected_dic.items()):
