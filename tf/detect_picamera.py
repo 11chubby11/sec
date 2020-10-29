@@ -82,12 +82,13 @@ def free_up_space():
   #delete low percent images first
   csvlog.writerow([datetime.now(), 'Less than 100MB free. Deleting images until 1GB free.'])
   for files in os.walk(storage_location+'images'):
-    if files[1] == [] and files[2] == []:
-      os.rmdir(files[0])
     for file in files[2]:
       os.remove(files[0]+'/'+file)
       if shutil.disk_usage(storage_location).free > 1000*1000*1000: #1GB
         break
+  for files in os.walk(storage_location+'images'):
+    if files[1] == [] and files[2] == []:
+      os.rmdir(files[0])
 
 
 detected_dic = {}
@@ -118,8 +119,8 @@ def process_objects(results, labels, camera):
                          str(int(obj['score']*100))+' '+
                          str(int(xmin))+','+str(int(xmax))+','+str(int(ymin))+','+str(int(ymax))+
                          '.jpeg')
-        if shutil.disk_usage(storage_location).free < 100*1000*1000: #100MB
-          free_up_space()
+          if shutil.disk_usage(storage_location).free < 100*1000*1000: #100MB
+            free_up_space()
         except Exception as e:
           print('log: camera.capture', e)
     for key, value in list(detected_dic.items()):
