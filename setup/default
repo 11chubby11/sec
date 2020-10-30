@@ -4,10 +4,9 @@ server {
 
 	server_name _;
 
-	root /home/pi/Desktop/usb/;
-	index index.html;
-
 	location / {
+		root /home/pi/Desktop/usb/images;
+
 		autoindex on;
 		try_files $uri $uri/ =404;
 	}
